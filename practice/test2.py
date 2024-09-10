@@ -1,6 +1,8 @@
 import numpy as np
 import cv2
 
+### recognize motion ### 
+
 termination=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03)
 feature_params=dict(maxCorners=200, qualityLevel=0.01, minDistance=7, blockSize=7)
 lk_params=dict(winSize=(15,15),maxLevel=2, criteria=termination)
@@ -68,8 +70,8 @@ class App:
 
             cv2.imshow('frame',vis)
 
-            k=cv2.waitKey(30) & 0xFF
-            if k==27:
+            k=cv2.waitKey(30) & 0xFF 
+            if k==27: # Mean Esc 
                 break
 
             if k==ord('b'):
