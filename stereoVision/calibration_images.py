@@ -1,24 +1,33 @@
 import cv2
+import os
 
 #스테레오비전 캘리브레이션을 위한 이미지 수집용 코드
-cap1 = cv2.VideoCapture(0)  # 1번 카메라
-cap2 = cv2.VideoCapture(1)  # 0번 카메라
-# In Linux --> cv2.CAP_V4L2 라는 default값을 추가하는 것이 좋음
+cap_left = cv2.VideoCapture(0)  # 1번 카메라, LEFT
+cap_right = cv2.VideoCapture(1)  # 0번 카메라, RIGHT
+# In Linux --> cv2.CAP_V4L2
 
 num = 0
 
+# 디렉토리 생성 함수
+def create_dir_if_not_exists(directory):
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+create_dir_if_not_exists('images/stereoLeft')
+create_dir_if_not_exists('images/stereoRight')
+
 # checking camera_1
-if not cap1.isOpened():
-    print('unable to read camera_1 feed')
+if not cap_left.isOpened():
+    print('unable to read camera_left feed')
 
 # checking camera_2
-if not cap2.isOpened():
-    print('unable to read camera_2 feed')
+if not cap_right.isOpened():
+    print('unable to read camera_right feed')
 
-# recieve image data
-while cap1.isOpened() and cap2.isOpened():
-    success1, img1 = cap1.read()
-    success2, img2 = cap2.read()
+# Receive image data
+while cap_left.isOpened() and cap_right.isOpened():
+    success1, img_left = cap_left.read()
+    success2, img_right = cap_right.read()
 
     k = cv2.waitKey(5)
 
@@ -27,17 +36,27 @@ while cap1.isOpened() and cap2.isOpened():
         break
     # Wait for 's' key to save and exit
     elif k == ord('s'):
-        cv2.imwrite('images/stereoLeft/imageL' + str(num) + '.png', img1)
-        cv2.imwrite('images/stereoRight/imageR' + str(num) + '.png', img2)
-        print("images saved!")
+        left_image = 'images/stereoLeft/imageL' + str(num) + '.png'
+        right_image = 'images/stereoRight/imageR' + str(num) + '.png'
+
+        # checking process
+        if cv2.imwrite(left_image, img_left):
+            print(f"Left image saved as {left_image}")
+        else:
+            print(f"Failed to save left image {left_image}")
+
+        if cv2.imwrite(right_image, img_right):
+            print(f"Right image saved as {right_image}")
+        else:
+            print(f"Failed to save right image {right_image}")
         num += 1
 
-    cv2.imshow('Img 1',img1)
-    cv2.imshow('Img 2',img2)
+    cv2.imshow('Img left',img_left)
+    cv2.imshow('Img right',img_right)
 
-cap1.release()
-cap2.release()
+cap_left.release()
+cap_right.release()
 
 cv2.destroyAllWindows()
 
-### 시간 동기화가 잘 이루어지지 않는다면, 목표 프레임 레이트를 설정해야할 수 있음
+### 시간 동기화가 잘 이루어지지 않는다면, 목표 프레임 레이트를 설정해야할 수 있음 ###
