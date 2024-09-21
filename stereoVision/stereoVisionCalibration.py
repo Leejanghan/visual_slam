@@ -2,29 +2,24 @@ import numpy as np
 import cv2 as cv
 import glob
 
-
 ################ FIND CHESSBOARD CORNERS - OBJECT POINTS AND IMAGE POINTS #############################
-
-chessboardSize = (9,6)
+chessboardSize = (6,8)
 frameSize = (640,480)
 
-
-# termination criteria
+# termination criteria --> 최대 반복 횟수 및 오차 범위 설정
 criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
-
 
 # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
 objp = np.zeros((chessboardSize[0] * chessboardSize[1], 3), np.float32)
 objp[:,:2] = np.mgrid[0:chessboardSize[0],0:chessboardSize[1]].T.reshape(-1,2)
 
-size_of_chessboard_squares_mm = 20
+size_of_chessboard_squares_mm = 25
 objp = objp * size_of_chessboard_squares_mm
 
 # Arrays to store object points and image points from all the images.
 objpoints = [] # 3d point in real world space
 imgpointsL = [] # 2d points in image plane.
 imgpointsR = [] # 2d points in image plane.
-
 
 imagesLeft = sorted(glob.glob('images/stereoLeft/*.png'))
 imagesRight = sorted(glob.glob('images/stereoRight/*.png'))
@@ -58,11 +53,7 @@ for imgLeft, imgRight in zip(imagesLeft, imagesRight):
         cv.imshow('img right', imgR)
         cv.waitKey(1000)
 
-
 cv.destroyAllWindows()
-
-
-
 
 ############## CALIBRATION #######################################################
 
@@ -71,28 +62,22 @@ heightL, widthL, channelsL = imgL.shape
 newCameraMatrixL, roi_L = cv.getOptimalNewCameraMatrix(cameraMatrixL, distL, (widthL, heightL), 1, (widthL, heightL))
 
 retR, cameraMatrixR, distR, rvecsR, tvecsR = cv.calibrateCamera(objpoints, imgpointsR, frameSize, None, None)
-heightR, widthR, channelsR = imgR.shape
+heightR,    widthR, channelsR = imgR.shape
 newCameraMatrixR, roi_R = cv.getOptimalNewCameraMatrix(cameraMatrixR, distR, (widthR, heightR), 1, (widthR, heightR))
-
-
 
 ########## Stereo Vision Calibration #############################################
 
 flags = 0
 flags |= cv.CALIB_FIX_INTRINSIC
 # Here we fix the intrinsic camara matrixes so that only Rot, Trns, Emat and Fmat are calculated.
-# Hence intrinsic parameters are the same 
+# Hence intrinsic parameters are the same
 
 criteria_stereo= (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
 # This step is performed to transformation between the two cameras and calculate Essential and Fundamenatl matrix
 retStereo, newCameraMatrixL, distL, newCameraMatrixR, distR, rot, trans, essentialMatrix, fundamentalMatrix = cv.stereoCalibrate(objpoints, imgpointsL, imgpointsR, newCameraMatrixL, distL, newCameraMatrixR, distR, grayL.shape[::-1], criteria_stereo, flags)
 
-
-
-
 ########## Stereo Rectification #################################################
-
 rectifyScale= 1
 rectL, rectR, projMatrixL, projMatrixR, Q, roi_L, roi_R= cv.stereoRectify(newCameraMatrixL, distL, newCameraMatrixR, distR, grayL.shape[::-1], rot, trans, rectifyScale,(0,0))
 
