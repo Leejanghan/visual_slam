@@ -13,15 +13,17 @@ trigger 기능 X --> 카메라 '동기화'가 매우 중요한 point
 
 웹캠은 ABKO사의 APC850 사용 예정 
 
-step ) 카메라 캘리브레이션 진행 
-1. calibartion_images.py 실행
-2. stereovisioncalibration.py 실행 
----> 진행할 때 이미지 저장을 잘해야 됨
+step 1) 카메라 캘리브레이션 진행 
+calibration을 바탕으로 stereoMap.xml(왜곡계수)와 calib_test.txt(카메라 프로젝션 행렬)을 도출함
 
-step ) stereo vision 구현
-1. camera calibration 먼저 진행
-2. stereo vision.py 실행 
+step 2) stereo vision 구현
+SGBM_create()의 적절한 parameter를 찾기 위함
 
+step 3) sensor fusion
+sensor fusion을 위한 IMU 데이터를 불러옴 
+
+step 4) visual inertial odometry
+위 내용 바탕으로 VIO 진행 
 
 참고 github
 https://github.com/LearnTechWithUs/Stereo-Vision
