@@ -26,5 +26,7 @@ sensor fusion을 위한 IMU 데이터를 불러옴
 step 4) visual inertial odometry
 위 내용 바탕으로 VIO 진행 
 
+그 다음에 Visual slam 미완
+
 참고 github
 https://github.com/LearnTechWithUs/Stereo-Vision
