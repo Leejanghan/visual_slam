@@ -1,4 +1,4 @@
-# visual_slam 
+# Visual Odometry (with IMU)
 
 진행 과정은 notion에 기록 
 https://www.notion.so/visual-slam-108ff3f9b083809eb7aafcf0c0d6149d
